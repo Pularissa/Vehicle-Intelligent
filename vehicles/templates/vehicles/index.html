@@ -1,136 +1,78 @@
-{% load humanize %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Vehicle Intelligence | Fleet dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.plot.ly/plotly-4.1.1.min.js"></script>
-  <style>
-    :root { --ink: #17243a; --muted: #77859a; --blue: #2563eb; --line: #e9eef5; }
-    body { background: #f5f7fb; color: var(--ink); font-family: "DM Sans", sans-serif; }
-    h1, h2, h3, .brand { font-family: "Manrope", sans-serif; }
-    .sidebar { background: #101b2d; min-height: 100vh; color: #b4bfd0; }
-    .brand { color: white; font-size: 1.04rem; font-weight: 800; letter-spacing: -.04em; }
-    .brand-mark { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; color: white; background: #2563eb; }
-    .nav-label { color: #77859a; font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-    .side-link { color: #b4bfd0; border-radius: 9px; padding: .72rem .8rem; font-size: .88rem; text-decoration: none; display: flex; gap: .7rem; }
-    .side-link.active, .side-link:hover { background: #1b2b43; color: white; }
-    main { min-width: 0; }
-    .topbar { background: #fff; border-bottom: 1px solid var(--line); }
-    .eyebrow { color: var(--blue); font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-    h1 { font-weight: 800; letter-spacing: -.045em; }
-    .muted { color: var(--muted); }
-    .card { border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 4px 16px rgba(24, 42, 72, .035); }
-    .stat-card { position: relative; overflow: hidden; }
-    .stat-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; background: #eff6ff; color: var(--blue); font-size: 1.2rem; }
-    .stat-value { font-family: "Manrope", sans-serif; font-size: 1.75rem; font-weight: 800; letter-spacing: -.05em; }
-    .section-title { font-size: 1rem; font-weight: 700; letter-spacing: -.02em; }
-    .chart-box { min-height: 290px; }
-    .table thead th { color: var(--muted); background: #f8fafc; font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border-bottom: 1px solid var(--line); }
-    .table td { color: #42516a; font-size: .85rem; }
-    .status { background: #ecfdf5; color: #047857; font-size: .72rem; font-weight: 700; }
-    .status.inactive { background: #fff7ed; color: #c2410c; }
-    .status.unknown { background: #f1f5f9; color: #475569; }
-    @media (max-width: 767.98px) { .sidebar { min-height: auto; } .chart-box { min-height: 250px; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Vehicle ML Dashboard</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+
+        .scrollspy-example {
+            height: 80vh;
+            overflow-y: scroll;
+            position: relative;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: #0d6efd;
+        }
+    </style>
 </head>
+
 <body>
-<div class="container-fluid">
-  <div class="row">
-    <aside class="col-md-3 col-xl-2 sidebar p-3 p-lg-4">
-      <a class="d-flex align-items-center gap-2 text-decoration-none mb-5" href="{% url 'dashboard' %}">
-        <span class="brand-mark">V</span><span class="brand">VEHICLE<span class="text-primary">IQ</span></span>
-      </a>
-      <div class="nav-label mb-2 px-2">Workspace</div>
-      <nav class="d-grid gap-1">
-        <a class="side-link active" href="#overview"><span>▦</span> Overview</a>
-        <a class="side-link" href="#analytics"><span>◫</span> Analytics</a>
-        <a class="side-link" href="#inventory"><span>▤</span> Inventory</a>
-      </nav>
-      <div class="mt-5 px-2 nav-label">Data insights</div>
-      <div class="small mt-3 px-2" style="color:#77859a">Updated from your vehicle dataset</div>
-      <div class="mt-2 px-2 small text-white"><span class="text-success me-2">●</span>Data source connected</div>
-      <div class="d-none d-md-block position-absolute bottom-0 mb-4 small" style="color:#77859a">Fleet intelligence dashboard</div>
-    </aside>
-    <main class="col-md-9 col-xl-10 p-0">
-      <header class="topbar px-4 px-lg-5 py-3 d-flex justify-content-between align-items-center">
-        <div class="small muted">Workspace <span class="mx-2">/</span><span class="text-dark fw-semibold">Overview</span></div>
-        <div class="d-flex align-items-center gap-3">
-          <span class="small muted d-none d-sm-inline">Vehicle analytics</span>
-          <span class="rounded-circle d-grid place-items-center text-primary fw-bold" style="width:36px;height:36px;background:#eff6ff">VI</span>
+    <div class="container-fluid mt-4">
+        <div class="row">
+
+            <div class="col-md-3">
+                <div id="dashboard-nav"
+                     class="list-group position-sticky top-0">
+
+                    <a class="list-group-item list-group-item-action"
+                       href="#frequency-table">
+                        Frequency Tables (One-way)
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="scrollspy-example">
+
+                    <h1 class="text-center text-primary mb-4">
+                        Vehicle Machine Learning Dashboard
+                    </h1>
+
+                    <div id="frequency-table"
+                         class="card shadow mb-5">
+
+                        <div class="card-header bg-info text-white">
+                            Frequency Tables (One-way)
+                        </div>
+
+                        <div class="card-body">
+                            {{ frequency_table|safe }}
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
         </div>
-      </header>
-      <div class="p-3 p-lg-5">
-        <section id="overview" class="mb-4">
-          <div class="eyebrow mb-2">Fleet overview</div>
-          <div class="d-flex flex-wrap justify-content-between align-items-end gap-3">
-            <div>
-              <h1 class="h2 mb-1">Vehicle management</h1>
-              <p class="muted mb-0">A clear view of your fleet, inventory, and performance.</p>
-            </div>
-            <span class="badge rounded-pill text-bg-light border px-3 py-2">● &nbsp; Live dataset</span>
-          </div>
-        </section>
-        <section class="row g-3 mb-4" aria-label="Fleet summary">
-          <div class="col-6 col-xl-3"><div class="card stat-card h-100"><div class="card-body p-3 p-lg-4">
-            <div class="d-flex justify-content-between align-items-start"><span class="small muted">Total vehicles</span><span class="stat-icon">▣</span></div>
-            <div class="stat-value mt-3">{{ summary.vehicle_count|intcomma }}</div><div class="small muted">Across {{ summary.manufacturer_count }} manufacturers</div>
-          </div></div></div>
-          <div class="col-6 col-xl-3"><div class="card stat-card h-100"><div class="card-body p-3 p-lg-4">
-            <div class="d-flex justify-content-between align-items-start"><span class="small muted">Available</span><span class="stat-icon" style="background:#ecfdf5;color:#059669">✓</span></div>
-            <div class="stat-value mt-3">{{ summary.active_count|intcomma }}</div><div class="small muted">Currently active</div>
-          </div></div></div>
-          <div class="col-6 col-xl-3"><div class="card stat-card h-100"><div class="card-body p-3 p-lg-4">
-            <div class="d-flex justify-content-between align-items-start"><span class="small muted">Average selling price</span><span class="stat-icon" style="background:#fff7ed;color:#ea580c">$</span></div>
-            <div class="stat-value mt-3">${{ summary.average_price|floatformat:0|intcomma }}</div><div class="small muted">Mean selling price</div>
-          </div></div></div>
-          <div class="col-6 col-xl-3"><div class="card stat-card h-100"><div class="card-body p-3 p-lg-4">
-            <div class="d-flex justify-content-between align-items-start"><span class="small muted">Average distance</span><span class="stat-icon" style="background:#f5f3ff;color:#7c3aed">↗</span></div>
-            <div class="stat-value mt-3">{{ summary.average_kilometers|floatformat:0|intcomma }}</div><div class="small muted">Kilometers driven</div>
-            {% if summary.missing_kilometer_count %}<div class="small text-warning mt-1">{{ summary.missing_kilometer_count }} record(s) have no valid distance</div>{% endif %}
-          </div></div></div>
-        </section>
-        <section id="analytics" class="row g-3 mb-4">
-          <div class="col-xl-7"><div class="card h-100"><div class="card-body p-3 p-lg-4">
-            <div class="d-flex justify-content-between align-items-start mb-2"><div><h2 class="section-title mb-1">Vehicles by manufacturer</h2><div class="small muted">Inventory distribution</div></div><span class="small muted">All vehicles</span></div>
-            <div class="chart-box">{{ charts.manufacturer|safe }}</div>
-          </div></div></div>
-          <div class="col-xl-5"><div class="card h-100"><div class="card-body p-3 p-lg-4">
-            <div class="mb-2"><h2 class="section-title mb-1">Fuel composition</h2><div class="small muted">Share by fuel type</div></div>
-            <div class="chart-box">{{ charts.fuel|safe }}</div>
-          </div></div></div>
-          <div class="col-12"><div class="card"><div class="card-body p-3 p-lg-4">
-            <div class="mb-2"><h2 class="section-title mb-1">Model year distribution</h2><div class="small muted">Vehicle count by model year</div></div>
-            <div class="chart-box">{{ charts.year|safe }}</div>
-          </div></div></div>
-        </section>
-        <section id="inventory" class="row g-3">
-          <div class="col-xl-7"><div class="card h-100"><div class="card-body p-0">
-            <div class="p-3 p-lg-4 pb-2"><h2 class="section-title mb-1">Vehicle inventory</h2><div class="small muted">A snapshot of the fleet</div></div>
-            <div class="table-responsive px-3 px-lg-4 pb-3">
-              <table class="table align-middle mb-0"><thead><tr><th>Manufacturer</th><th>Year</th><th>Type</th><th>Fuel</th><th>Condition</th><th class="text-end">Selling price</th></tr></thead>
-                <tbody>{% for vehicle in vehicles %}
-                  <tr><td class="fw-semibold text-dark">{{ vehicle.manufacturer }}</td><td>{{ vehicle.year }}</td><td>{{ vehicle.body_type }}</td><td>{{ vehicle.fuel_type|title }}</td>
-                    <td><span class="badge rounded-pill status{% if vehicle.vehicle_condition == 'Inactive' %} inactive{% elif vehicle.vehicle_condition == 'Unknown' %} unknown{% endif %}">{{ vehicle.vehicle_condition }}</span></td>
-                    <td class="text-end">${{ vehicle.selling_price|floatformat:0|intcomma }}</td></tr>
-                {% endfor %}</tbody>
-              </table>
-            </div>
-          </div></div></div>
-          <div class="col-xl-5"><div class="card h-100"><div class="card-body p-0">
-            <div class="p-3 p-lg-4 pb-2"><h2 class="section-title mb-1">Frequency by make</h2><div class="small muted">Vehicles grouped by manufacturer</div></div>
-            <div class="table-responsive px-3 px-lg-4 pb-3">{{ frequency_table|safe }}</div>
-          </div></div></div>
-        </section>
-        <footer class="small muted text-center py-4">VehicleIQ &middot; Fleet insights at a glance</footer>
-      </div>
-    </main>
-  </div>
-</div>
+    </div>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+    </script>
 </body>
+
 </html>
