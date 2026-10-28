@@ -1,9 +1,3 @@
-import plotly.express as px
-import plotly.offline as opy
-import plotly.graph_objects as go
-import pandas as pd
-
-
 def frequency_table(df):
     manufacturer_counts = (
         df["manufacturer"].value_counts().reset_index()
@@ -16,3 +10,26 @@ def frequency_table(df):
         justify="center",
     )
     return table_html
+
+
+def high_value_cars(df):
+    return df[df["selling_price"] > 5000].to_html(
+        classes="table table-bordered table-striped table-sm",
+        index=False,
+    )
+
+
+def total_price_by_manufacturer(df):
+    totals = df.groupby(["manufacturer", "transmission"])[["selling_price"]].sum()
+    return totals.to_html(
+        classes="table table-bordered table-striped table-sm",
+        float_format="%.2f",
+    )
+
+
+def total_selling_price_by_manufacturer(df):
+    totals = df.groupby("manufacturer")[["selling_price"]].sum()
+    return totals.to_html(
+        classes="table table-bordered table-striped table-sm",
+        float_format="%.2f",
+    )

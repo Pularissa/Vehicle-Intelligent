@@ -40,6 +40,18 @@
                        href="#frequency-table">
                         Frequency Tables (One-way)
                     </a>
+                    <a class="list-group-item list-group-item-action"
+                       href="#high-value-cars">
+                        Cars over 5,000
+                    </a>
+                    <a class="list-group-item list-group-item-action"
+                       href="#price-by-manufacturer">
+                        Selling price by transmission
+                    </a>
+                    <a class="list-group-item list-group-item-action"
+                       href="#total-price-by-manufacturer">
+                        Selling price by manufacturer
+                    </a>
 
                 </div>
             </div>
@@ -60,6 +72,45 @@
 
                         <div class="card-body">
                             {{ frequency_table|safe }}
+                        </div>
+
+                    </div>
+
+                    <div id="high-value-cars"
+                         class="card shadow mb-5">
+
+                        <div class="card-header bg-info text-white">
+                            Vehicles with selling price above 5,000
+                        </div>
+
+                        <div class="card-body table-responsive">
+                            {{ high_value_cars|safe }}
+                        </div>
+
+                    </div>
+
+                    <div id="price-by-manufacturer"
+                         class="card shadow mb-5">
+
+                        <div class="card-header bg-info text-white">
+                            Total selling price by manufacturer and transmission
+                        </div>
+
+                        <div class="card-body table-responsive">
+                            {{ total_price_by_manufacturer|safe }}
+                        </div>
+
+                    </div>
+
+                    <div id="total-price-by-manufacturer"
+                         class="card shadow mb-5">
+
+                        <div class="card-header bg-info text-white">
+                            Total selling price by manufacturer
+                        </div>
+
+                        <div class="card-body table-responsive">
+                            {{ total_selling_price_by_manufacturer|safe }}
                         </div>
 
                     </div>
