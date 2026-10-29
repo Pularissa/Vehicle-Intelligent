@@ -4,126 +4,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Vehicle ML Dashboard</title>
-
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
         rel="stylesheet">
-
     <style>
+        :root {
+            --ink: #17243b;
+            --muted: #718096;
+            --line: #e8edf4;
+            --accent: #3468f6;
+            --canvas: #f5f7fb;
+        }
+
         body {
-            background-color: #f4f6f9;
+            min-height: 100vh;
+            background: var(--canvas);
+            color: var(--ink);
+            font-family: Inter, "Segoe UI", sans-serif;
         }
 
-        .scrollspy-example {
-            height: 80vh;
-            overflow-y: scroll;
-            position: relative;
+        .sidebar {
+            background: #17243b;
+            min-height: 100vh;
+            padding: 2rem 1.25rem;
         }
 
-        .nav-pills .nav-link.active {
-            background-color: #0d6efd;
+        .brand {
+            color: #fff;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -.03em;
+        }
+
+        .sidebar-label {
+            color: #91a0b8;
+            font-size: .7rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            margin: 2.5rem .75rem .75rem;
+            text-transform: uppercase;
+        }
+
+        .sidebar .nav-link {
+            border-radius: .7rem;
+            color: #c4cede;
+            font-size: .9rem;
+            margin-bottom: .35rem;
+            padding: .8rem .85rem;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: #293a59;
+            color: #fff;
+        }
+
+        main {
+            padding: 2.5rem clamp(1.25rem, 4vw, 3.5rem);
+        }
+
+        .eyebrow {
+            color: var(--accent);
+            font-size: .75rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .page-title {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-weight: 750;
+            letter-spacing: -.045em;
+        }
+
+        .summary-card,
+        .data-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 1rem;
+            box-shadow: 0 8px 28px rgb(23 36 59 / 4%);
+        }
+
+        .summary-card {
+            padding: 1.25rem 1.5rem;
+        }
+
+        .summary-label {
+            color: var(--muted);
+            font-size: .8rem;
+        }
+
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .data-card {
+            overflow: hidden;
+            scroll-margin-top: 1.5rem;
+        }
+
+        .data-card-header {
+            border-bottom: 1px solid var(--line);
+            padding: 1.25rem 1.5rem;
+        }
+
+        .data-card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .data-card-description {
+            color: var(--muted);
+            font-size: .85rem;
+            margin: .35rem 0 0;
+        }
+
+        .table-wrap {
+            max-height: 34rem;
+            overflow: auto;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table thead th {
+            background: #f8faff;
+            border-bottom: 1px solid var(--line);
+            color: #59677e;
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .04em;
+            position: sticky;
+            text-transform: uppercase;
+            top: 0;
+            white-space: nowrap;
+            z-index: 1;
+        }
+
+        .table td {
+            color: #34425a;
+            font-size: .84rem;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 767.98px) {
+            .sidebar {
+                min-height: auto;
+                padding: 1.25rem;
+            }
+
+            .sidebar-label {
+                margin-top: 1.25rem;
+            }
+
+            main {
+                padding-top: 1.75rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container-fluid mt-4">
+    <div class="container-fluid">
         <div class="row">
+            <aside class="col-md-3 col-xl-2 sidebar">
+                <a class="brand text-decoration-none" href="#">Vehicle Insights</a>
+                <p class="sidebar-label">Dashboard sections</p>
+                <nav class="nav nav-pills flex-column">
+                    {% for table in tables %}
+                    <a class="nav-link{% if forloop.first %} active{% endif %}"
+                       href="#{{ table.id }}">{{ table.title }}</a>
+                    {% endfor %}
+                </nav>
+            </aside>
 
-            <div class="col-md-3">
-                <div id="dashboard-nav"
-                     class="list-group position-sticky top-0">
+            <main class="col-md-9 col-xl-10">
+                <header class="mb-4">
+                    <p class="eyebrow mb-2">Analytics overview</p>
+                    <h1 class="page-title mb-2">Vehicle Machine Learning Dashboard</h1>
+                    <p class="text-secondary mb-0">Explore inventory patterns and selling-price summaries.</p>
+                </header>
 
-                    <a class="list-group-item list-group-item-action"
-                       href="#frequency-table">
-                        Frequency Tables (One-way)
-                    </a>
-                    <a class="list-group-item list-group-item-action"
-                       href="#high-value-cars">
-                        Cars over 5,000
-                    </a>
-                    <a class="list-group-item list-group-item-action"
-                       href="#price-by-manufacturer">
-                        Selling price by transmission
-                    </a>
-                    <a class="list-group-item list-group-item-action"
-                       href="#total-price-by-manufacturer">
-                        Selling price by manufacturer
-                    </a>
-
-                </div>
-            </div>
-
-            <div class="col-md-9">
-                <div class="scrollspy-example">
-
-                    <h1 class="text-center text-primary mb-4">
-                        Vehicle Machine Learning Dashboard
-                    </h1>
-
-                    <div id="frequency-table"
-                         class="card shadow mb-5">
-
-                        <div class="card-header bg-info text-white">
-                            Frequency Tables (One-way)
-                        </div>
-
-                        <div class="card-body">
-                            {{ frequency_table|safe }}
-                        </div>
-
+                <section class="summary-card mb-4 d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="summary-label">Vehicles analyzed</div>
+                        <div class="summary-value">{{ vehicle_count }}</div>
                     </div>
+                    <span class="badge rounded-pill text-bg-primary-subtle text-primary px-3 py-2">
+                        Dataset overview
+                    </span>
+                </section>
 
-                    <div id="high-value-cars"
-                         class="card shadow mb-5">
-
-                        <div class="card-header bg-info text-white">
-                            Vehicles with selling price above 5,000
+                <section class="d-grid gap-4">
+                    {% for table in tables %}
+                    <article id="{{ table.id }}" class="data-card">
+                        <div class="data-card-header">
+                            <h2 class="data-card-title">{{ table.title }}</h2>
+                            <p class="data-card-description">{{ table.description }}</p>
                         </div>
-
-                        <div class="card-body table-responsive">
-                            {{ high_value_cars|safe }}
+                        <div class="table-wrap">
+                            {% include "vehicles/_data_table.html" with columns=table.columns rows=table.rows %}
                         </div>
-
-                    </div>
-
-                    <div id="price-by-manufacturer"
-                         class="card shadow mb-5">
-
-                        <div class="card-header bg-info text-white">
-                            Total selling price by manufacturer and transmission
-                        </div>
-
-                        <div class="card-body table-responsive">
-                            {{ total_price_by_manufacturer|safe }}
-                        </div>
-
-                    </div>
-
-                    <div id="total-price-by-manufacturer"
-                         class="card shadow mb-5">
-
-                        <div class="card-header bg-info text-white">
-                            Total selling price by manufacturer
-                        </div>
-
-                        <div class="card-body table-responsive">
-                            {{ total_selling_price_by_manufacturer|safe }}
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-
+                    </article>
+                    {% endfor %}
+                </section>
+            </main>
         </div>
     </div>
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
-    </script>
 </body>
 
 </html>

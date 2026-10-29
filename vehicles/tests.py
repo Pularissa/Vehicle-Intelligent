@@ -2,7 +2,7 @@ import pandas as pd
 from django.test import TestCase
 from django.urls import reverse
 
-from .dashboard import (
+from .views import (
     frequency_table,
     high_value_cars,
     total_price_by_manufacturer,
@@ -11,33 +11,36 @@ from .dashboard import (
 
 
 class DashboardViewTests(TestCase):
-    def test_dashboard_renders_manufacturer_frequency_table(self):
+    def test_dashboard_renders_styled_tables(self):
         response = self.client.get(reverse("dashboard"))
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Vehicle Machine Learning Dashboard")
-        self.assertContains(response, "Frequency Tables (One-way)")
-        self.assertContains(response, "Vehicles with selling price above 5,000")
-        self.assertContains(response, "Total selling price by manufacturer and transmission")
-        self.assertContains(response, "Total selling price by manufacturer")
-        self.assertContains(response, "table-bordered")
+        self.assertContains(response, "Manufacturer frequency")
+        self.assertContains(response, "Vehicles above 5,000")
+        self.assertContains(response, "Price by manufacturer and transmission")
+        self.assertContains(response, "Price by manufacturer")
+        self.assertContains(response, "table-hover")
         self.assertContains(response, "Manufacturer")
         self.assertContains(response, "Count")
         self.assertContains(response, "Honda")
+        self.assertContains(response, "Vehicles analyzed")
 
     def test_frequency_table_counts_manufacturers(self):
         df = pd.DataFrame(
             {"manufacturer": ["Honda", "Toyota", "Honda", "BMW"]}
         )
 
-        table_html = frequency_table(df)
+        result = frequency_table(df)
 
-        self.assertIn("table table-bordered table-striped table-sm", table_html)
-        self.assertIn("<th>Manufacturer</th>", table_html)
-        self.assertIn("<th>Count</th>", table_html)
-        self.assertNotIn("<th></th>", table_html)
-        self.assertIn("Honda", table_html)
-        self.assertIn(">2<", table_html)
+        self.assertEqual(
+            result,
+            [
+                {"Manufacturer": "Honda", "Count": 2},
+                {"Manufacturer": "Toyota", "Count": 1},
+                {"Manufacturer": "BMW", "Count": 1},
+            ],
+        )
 
     def test_high_value_cars_only_includes_prices_above_5000(self):
         df = pd.DataFrame(
@@ -47,11 +50,11 @@ class DashboardViewTests(TestCase):
             }
         )
 
-        table_html = high_value_cars(df)
+        result = high_value_cars(df)
 
-        self.assertIn("Honda", table_html)
-        self.assertNotIn("Toyota", table_html)
-        self.assertNotIn("<th></th>", table_html)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["manufacturer"], "Honda")
+        self.assertEqual(result[0]["selling_price"], 5001)
 
     def test_total_price_is_grouped_by_manufacturer_and_transmission(self):
         df = pd.DataFrame(
@@ -62,13 +65,28 @@ class DashboardViewTests(TestCase):
             }
         )
 
-        table_html = total_price_by_manufacturer(df)
+        result = total_price_by_manufacturer(df)
 
-        self.assertIn("automatic", table_html)
-        self.assertIn("manual", table_html)
-        self.assertIn("13000", table_html)
-        self.assertIn("8000", table_html)
-        self.assertIn("9000", table_html)
+        self.assertEqual(
+            result,
+            [
+                {
+                    "manufacturer": "Honda",
+                    "transmission": "automatic",
+                    "selling_price": 13000,
+                },
+                {
+                    "manufacturer": "Honda",
+                    "transmission": "manual",
+                    "selling_price": 8000,
+                },
+                {
+                    "manufacturer": "Toyota",
+                    "transmission": "manual",
+                    "selling_price": 9000,
+                },
+            ],
+        )
 
     def test_total_selling_price_is_grouped_by_manufacturer_only(self):
         df = pd.DataFrame(
@@ -79,11 +97,12 @@ class DashboardViewTests(TestCase):
             }
         )
 
-        table_html = total_selling_price_by_manufacturer(df)
+        result = total_selling_price_by_manufacturer(df)
 
-        self.assertIn("Honda", table_html)
-        self.assertIn("Toyota", table_html)
-        self.assertIn("14000", table_html)
-        self.assertIn("9000", table_html)
-        self.assertNotIn("automatic", table_html)
-        self.assertNotIn("manual", table_html)
+        self.assertEqual(
+            result,
+            [
+                {"manufacturer": "Honda", "selling_price": 14000},
+                {"manufacturer": "Toyota", "selling_price": 9000},
+            ],
+        )

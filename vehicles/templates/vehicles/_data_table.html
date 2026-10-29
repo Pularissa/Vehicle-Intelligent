@@ -1,0 +1,24 @@
+<table class="table table-hover align-middle">
+    <thead>
+        <tr>
+            {% for column in columns %}
+            <th scope="col">{{ column }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            {% for column, value in row.items %}
+            <td>{{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% empty %}
+        <tr>
+            <td class="text-secondary py-4 text-center" colspan="{{ columns|length }}">
+                No records found.
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
